@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Implementation-Title: engineer_shifts
+Implementation-Version: 1.0.0-SNAPSHOT
+Built-By: Bommu
+Implementation-Vendor-Id: com.engineer.shifts
+Build-Jdk: 1.8.0_181
+Implementation-URL: http://projects.spring.io/spring-boot/engineer_shi
+ fts/
+Created-By: Maven Integration for Eclipse
+Implementation-Vendor: Pivotal Software, Inc.
+

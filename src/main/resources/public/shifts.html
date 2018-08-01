@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Bootstrap Example</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <link rel="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/css/bootstrap-datepicker.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.8.0/js/bootstrap-datepicker.min.js"></script>
+</head>
+<body>
+
+<script type="text/javascript">
+	  
+	  $(document).ready(function(){
+		  
+	  	$('#startDate').datepicker({
+	  		format: 'yyyy-mm-dd'
+	  	});
+	  	
+	  	$('#endDate').datepicker({
+	  		format: 'yyyy-mm-dd'
+	  	});
+	  	
+	  	$('#generateShifts').click(function(){
+	  		var data ={
+	  				'startDate': $('#startDate').val(),
+	  				'endDate': $('#endDate').val(),
+	  				'shiftsPerDay' : $('#shiftsPerDay').val()
+	  		};
+	  		$.ajax({
+		    	type: "POST",
+		    	enctype: 'multipart/form-data',
+		    	data,
+		    	url: "/shifts/generate",
+		    }).done(function(data) {		    	
+		    	var shiftsDashboardBody = '';
+		    	$.each(data, function(index, value) {
+		    		var shiftEngineersPerDayMap = value.shiftEngineersPerDay;
+		    		$.each(shiftEngineersPerDayMap, function(key, value) {
+		    			var dateColumn = '';
+			    		var shiftColumn = ''
+		    			dateColumn = '<td>' + key + '</td>';
+		    			$.each(value, function(index, engineer) {
+		    				if (shiftColumn == '') {
+			    				shiftColumn = '<td>' + engineer.id + '</td>';
+			    			} else {
+			    				shiftColumn = shiftColumn+'<td>' + engineer.id + '</td>';
+			    			}
+			    		});
+		    				if (shiftsDashboardBody == '') {
+		    					shiftsDashboardBody = '<tr>'+dateColumn+shiftColumn+'</tr>';
+		    				} else {
+		    					shiftsDashboardBody = shiftsDashboardBody+'<tr>'+dateColumn+shiftColumn+'</tr>';
+		    				}
+		    		});
+	    		});
+		    	$('#shiftsDashboard').html(shiftsDashboardBody);
+		    }).fail(function(data) {
+		    	console.log(data);
+		    });
+	  	});
+	  });
+	  	
+	  </script>
+
+<div class="container-fluid">
+  <h2>Welcome to Shifts Generation System</h2>
+</div>
+	<section id="shifts">
+		<div class="container">
+		<div class="row">
+			Shift start Date: <input type="text" id="startDate" />
+		</div>
+		<div class="row">
+			Shift end Date: <input type="text" id="endDate" />
+		</div>
+		<div class="row">
+			Shifts Per Day: <input type="text" id="shiftsPerDay" />
+		</div>
+		<div class="row">
+			<input type="button" id="generateShifts" value="Generate Shifts" />
+		</div>
+			<div class="row">
+				<div class="col-lg-8 mx-auto">
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Date</th>
+								<th>Shift 1</th>
+								<th>Shift 2</th>
+							</tr>
+						</thead>
+						<tbody id="shiftsDashboard"></tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		</section>
+</body>
+</html>
